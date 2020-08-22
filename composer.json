@@ -18,5 +18,8 @@
     },
     "scripts": {
         "phpcs": "./vendor/bin/phpcs ./src --standard=PSR12"
+    },
+    "autoload": {
+        "psr-4": {"Sergeymitr\\SimpleJWT\\": "src/"}
     }
 }
