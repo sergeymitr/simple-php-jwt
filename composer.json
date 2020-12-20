@@ -11,15 +11,22 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9"
     },
     "scripts": {
-        "phpcs": "./vendor/bin/phpcs ./src --standard=PSR12"
+        "phpcs": "./vendor/bin/phpcs ./src --standard=PSR12",
+        "phpunit": "./vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {"Sergeymitr\\SimpleJWT\\": "src/"}
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
     }
 }
