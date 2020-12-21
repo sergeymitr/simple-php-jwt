@@ -2,53 +2,79 @@
 
 namespace Sergeymitr\SimpleJWT\Tests;
 
-use DateInterval;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Sergeymitr\SimpleJWT\Token;
 
 class TokenTest extends TestCase
 {
-    private static array $claimsData = [];
-
-
-    public static function setUpBeforeClass(): void
+    public function testCreate(): void
     {
-        parent::setUpBeforeClass();
-
-        self::$claimsData = [
+        $claimsData = [
             'issuer' => 'Sergeymitr\SimpleJWT',
             'subject' => 'Test Sample',
             'audience' => 'PHPUnit',
-            'expiration' => (new DateTime())->add(new DateInterval('P1D')),
-            'notBefore' => (new DateTime())->add(new DateInterval('PT1M')),
+            'expiration' => new DateTime('2020-02-02'),
+            'notBefore' => new DateTime('2020-01-01'),
             'ID' => 'sample-id'
         ];
-    }
 
-    public function testClaims(): void
-    {
         $startTime = time();
-        $token = new Token();
+        $token = Token::create();
 
-        foreach(self::$claimsData as $key => $data) {
+        foreach ($claimsData as $key => $data) {
             $token->{'set' . strtoupper($key)}($data);
         }
 
-        $token->setCustom('key1', 'value1');
-        $token->setCustom('key2', 'value2');
+        $token->setCustomHeader('h-key1', 'h-value1');
+        $token->setCustomHeader('h-key2', 'h-value2');
 
-        $tokenClaims = $token->getAll();
+        $token->setCustomPayload('key1', 'value1');
+        $token->setCustomPayload('key2', 'value2');
 
-        self::assertEquals(self::$claimsData['issuer'], $tokenClaims['iss']);
-        self::assertEquals(self::$claimsData['subject'], $tokenClaims['sub']);
-        self::assertEquals(self::$claimsData['audience'], $tokenClaims['aud']);
-        self::assertEquals(self::$claimsData['expiration']->format('U'), $tokenClaims['exp']);
-        self::assertEquals(self::$claimsData['notBefore']->format('U'), $tokenClaims['nbf']);
-        self::assertEquals(self::$claimsData['ID'], $tokenClaims['jti']);
-        self::assertGreaterThanOrEqual($startTime, $tokenClaims['iat']);
+        $tokenPayload = $token->getPayload();
 
-        self::assertEquals('value1', $tokenClaims['key1']);
-        self::assertEquals('value2', $tokenClaims['key2']);
+        self::assertEquals($claimsData['issuer'], $tokenPayload['iss']);
+        self::assertEquals($claimsData['subject'], $tokenPayload['sub']);
+        self::assertEquals($claimsData['audience'], $tokenPayload['aud']);
+        self::assertEquals($claimsData['expiration']->format('U'), $tokenPayload['exp']);
+        self::assertEquals($claimsData['notBefore']->format('U'), $tokenPayload['nbf']);
+        self::assertEquals($claimsData['ID'], $tokenPayload['jti']);
+        self::assertGreaterThanOrEqual($startTime, $tokenPayload['iat']);
+
+        self::assertEquals('value1', $tokenPayload['key1']);
+        self::assertEquals('value2', $tokenPayload['key2']);
+
+        $tokenHeaders = $token->getHeaders();
+
+        self::assertEquals('JWT', $tokenHeaders['typ']);
+        self::assertEquals('h-value1', $tokenHeaders['h-key1']);
+        self::assertEquals('h-value2', $tokenHeaders['h-key2']);
+    }
+
+    public function testImport()
+    {
+        $headerData = [
+            'typ' => 'JWT',
+            'alg' => 'HS256',
+            'h-key1' => 'h-value1',
+            'h-key2' => 'h-value2'
+        ];
+
+        $payloadData = [
+            'iss' => 'Sergeymitr\SimpleJWT',
+            'sub' => 'Test Sample',
+            'aud' => 'PHPUnit',
+            'exp' => 1580601600,
+            'nbf' => 1577836800,
+            'jti' => 'sample-id',
+            'key1' => 'value1',
+            'key2' => 'value2'
+        ];
+
+        $token = Token::import($headerData, $payloadData);
+
+        self::assertEquals($headerData, $token->getHeaders());
+        self::assertEquals($payloadData, $token->getPayload());
     }
 }

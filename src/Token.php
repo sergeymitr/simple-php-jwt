@@ -9,70 +9,150 @@ use DateTimeInterface;
 
 class Token implements TokenInterface
 {
+    private const DEFAULT_TOKEN_TYPE = 'JWT';
 
-    private array $data = array();
+    private array $payload = array();
 
-    public function __construct()
+    private array $header = array();
+
+    public static function import(array $headers, array $payload): TokenInterface
     {
-        $this->setIssuedAt(new DateTime());
+        $headers = array_filter($headers, 'is_scalar');
+        $payload = array_filter($payload, 'is_scalar');
+
+        $token = new static();
+
+        if (!empty($headers['typ'])) {
+            $token->setType($headers['typ']);
+            unset($headers['typ']);
+        }
+
+        array_walk($headers, function ($value, $key) use ($token) {
+            $token->setCustomHeader($key, $value);
+        });
+
+        if (!empty($payload['iat'])) {
+            $token->setIssuedAt(DateTime::createFromFormat('U', (string)$headers['iat']));
+            unset($payload['iat']);
+        }
+
+        if (!empty($payload['iss'])) {
+            $token->setIssuer($payload['iss']);
+            unset($payload['iss']);
+        }
+
+        if (!empty($payload['sub'])) {
+            $token->setSubject($payload['sub']);
+            unset($payload['sub']);
+        }
+
+        if (!empty($payload['aud'])) {
+            $token->setAudience($payload['aud']);
+            unset($payload['aud']);
+        }
+
+        if (!empty($payload['exp'])) {
+            $token->setExpiration(DateTime::createFromFormat('U', (string)$payload['exp']));
+            unset($payload['exp']);
+        }
+
+        if (!empty($payload['nbf'])) {
+            $token->setNotBefore(DateTime::createFromFormat('U', (string)$payload['nbf']));
+            unset($payload['nbf']);
+        }
+
+        if (!empty($payload['jti'])) {
+            $token->setID($payload['jti']);
+            unset($payload['jti']);
+        }
+
+        array_walk($payload, function ($value, $key) use ($token) {
+            $token->setCustomPayload($key, $value);
+        });
+
+        return $token;
     }
 
-    public function getAll(): array
+    public static function create(): TokenInterface
     {
-        return $this->data;
+        return (new static())
+            ->setIssuedAt(new DateTime())
+            ->setType(self::DEFAULT_TOKEN_TYPE);
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->header;
+    }
+
+    public function getPayload(): array
+    {
+        return $this->payload;
     }
 
     /**
      * Set the "Issued At" claim.
      *
-     * @param  DateTimeInterface  $dateTime
+     * @param DateTimeInterface $dateTime
      * @return $this;
      */
-    private function setIssuedAt(DateTimeInterface $dateTime): TokenInterface
+    public function setIssuedAt(DateTimeInterface $dateTime): TokenInterface
     {
-        $this->data['iat'] = (int) $dateTime->format('U');
+        $this->payload['iat'] = (int)$dateTime->format('U');
         return $this;
     }
 
     public function setIssuer(string $issuer): TokenInterface
     {
-        $this->data['iss'] = $issuer;
+        $this->payload['iss'] = $issuer;
         return $this;
     }
 
     public function setSubject(string $subject): TokenInterface
     {
-        $this->data['sub'] = $subject;
+        $this->payload['sub'] = $subject;
         return $this;
     }
 
     public function setAudience($audience): TokenInterface
     {
-        $this->data['aud'] = $audience;
+        $this->payload['aud'] = $audience;
         return $this;
     }
 
     public function setExpiration(DateTimeInterface $expiration): TokenInterface
     {
-        $this->data['exp'] = (int)$expiration->format('U');
+        $this->payload['exp'] = (int)$expiration->format('U');
         return $this;
     }
 
     public function setNotBefore(DateTimeInterface $notBefore): TokenInterface
     {
-        $this->data['nbf'] = (int)$notBefore->format('U');
+        $this->payload['nbf'] = (int)$notBefore->format('U');
         return $this;
     }
 
     public function setID(string $id): TokenInterface
     {
-        $this->data['jti'] = $id;
+        $this->payload['jti'] = $id;
         return $this;
     }
 
-    public function setCustom(string $key, string $value): TokenInterface
+    public function setCustomPayload(string $key, string $value): TokenInterface
     {
-        $this->data[$key] = $value;
+        $this->payload[$key] = $value;
+        return $this;
+    }
+
+    public function setType(string $value): TokenInterface
+    {
+        $this->header['typ'] = $value;
+        return $this;
+    }
+
+    public function setCustomHeader(string $key, string $value): TokenInterface
+    {
+        $this->header[$key] = $value;
         return $this;
     }
 }
