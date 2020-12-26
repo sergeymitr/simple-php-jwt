@@ -11,12 +11,44 @@ use DateTimeInterface;
  */
 interface TokenInterface
 {
+
     /**
-     * Returns all defined fields (claims).
+     * Create a new token object from scratch, auto-filling some required data.
+     *
+     * @return TokenInterface
+     */
+    public static function create(): TokenInterface;
+
+    /**
+     * Create a token object using existing headers and payload.
+     *
+     * @param array $headers Token headers.
+     * @param array $payload Token payload.
+     * @return TokenInterface
+     */
+    public static function import(array $headers, array $payload): TokenInterface;
+
+    /**
+     * Returns all header fields.
      *
      * @return array
      */
-    public function getAll(): array;
+    public function getHeaders(): array;
+
+    /**
+     * Returns all payload fields (claims).
+     *
+     * @return array
+     */
+    public function getPayload(): array;
+
+    /**
+     * Set the "Issued At" claim.
+     *
+     * @param  DateTimeInterface  $dateTime
+     * @return $this;
+     */
+    public function setIssuedAt(DateTimeInterface $dateTime): TokenInterface;
 
     /**
      * Set the token issuer (e.g. your website name or URL).
@@ -82,11 +114,20 @@ interface TokenInterface
     public function setID(string $id): TokenInterface;
 
     /**
-     * Add a custom claim to the token.
+     * Add a custom payload claim to the token.
      *
      * @param string $key The custom key.
      * @param string $value The claim value.
      * @return $this
      */
-    public function setCustom(string $key, string $value): TokenInterface;
+    public function setCustomPayload(string $key, string $value): TokenInterface;
+
+    /**
+     * Add a custom header data to the token.
+     *
+     * @param string $key The custom key.
+     * @param string $value The value.
+     * @return $this
+     */
+    public function setCustomHeader(string $key, string $value): TokenInterface;
 }
