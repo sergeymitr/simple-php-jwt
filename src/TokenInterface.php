@@ -43,6 +43,21 @@ interface TokenInterface
     public function getPayload(): array;
 
     /**
+     * Set the token type (usually `JWT`).
+     *
+     * @param string $value
+     * @return TokenInterface
+     */
+    public function setType(string $value): TokenInterface;
+
+    /**
+     * Get the token type.
+     *
+     * @return string|null
+     */
+    public function getType(): ?string;
+
+    /**
      * Set the "Issued At" claim.
      *
      * @param  DateTimeInterface  $dateTime
@@ -61,6 +76,14 @@ interface TokenInterface
     public function setIssuer(string $issuer): TokenInterface;
 
     /**
+     * Get the token issuer.
+     * Optional.
+     *
+     * @return string|null
+     */
+    public function getIssuer(): ?string;
+
+    /**
      * Set the token subject (e.g. "auth").
      * Optional.
      *
@@ -69,6 +92,14 @@ interface TokenInterface
      * @return $this
      */
     public function setSubject(string $subject): TokenInterface;
+
+    /**
+     * Get the token subject.
+     * Optional.
+     *
+     * @return string|null
+     */
+    public function getSubject(): ?string;
 
     /**
      * Set the token recipient (e.g. username or email).
@@ -82,6 +113,15 @@ interface TokenInterface
     public function setAudience($audience): TokenInterface;
 
     /**
+     * Get the token recipient (e.g. username or email).
+     * If the recipient doesn't match, the token MUST BE rejected by the receiving application.
+     * Optional.
+     *
+     * @return string|null
+     */
+    public function getAudience(): ?string;
+
+    /**
      * Set the token expiration date/time.
      * The token MUST NOT BE accepted after the provided date/time.
      * Optional.
@@ -93,6 +133,15 @@ interface TokenInterface
     public function setExpiration(DateTimeInterface $expiration): TokenInterface;
 
     /**
+     * Set the token expiration date/time.
+     * The token MUST NOT BE accepted after the provided date/time.
+     * Optional.
+     *
+     * @return DateTimeInterface|null
+     */
+    public function getExpiration(): ?DateTimeInterface;
+
+    /**
      * Set the token "Not Before" claim.
      * The token MUST NOT BE accepted before the provided date/time.
      *
@@ -101,6 +150,14 @@ interface TokenInterface
      * @return $this
      */
     public function setNotBefore(DateTimeInterface $notBefore): TokenInterface;
+
+    /**
+     * Get the token "Not Before" claim.
+     * The token MUST NOT BE accepted before the provided date/time.
+     *
+     * @return DateTimeInterface|null
+     */
+    public function getNotBefore(): ?DateTimeInterface;
 
     /**
      * Set the unique identification string for your token.
@@ -114,6 +171,14 @@ interface TokenInterface
     public function setID(string $id): TokenInterface;
 
     /**
+     * Get the unique identification string for your token.
+     * Optional.
+     *
+     * @return string|null
+     */
+    public function getID(): ?string;
+
+    /**
      * Add a custom payload claim to the token.
      *
      * @param string $key The custom key.
@@ -123,6 +188,15 @@ interface TokenInterface
     public function setCustomPayload(string $key, string $value): TokenInterface;
 
     /**
+     * Get a custom payload claim.
+     *
+     * @param string $key The custom key.
+     *
+     * @return string|null
+     */
+    public function getCustomPayload(string $key): ?string;
+
+    /**
      * Add a custom header data to the token.
      *
      * @param string $key The custom key.
@@ -130,4 +204,12 @@ interface TokenInterface
      * @return $this
      */
     public function setCustomHeader(string $key, string $value): TokenInterface;
+
+    /**
+     * Get a custom header data.
+     *
+     * @param string $key The custom key.
+     * @return string|null
+     */
+    public function getCustomHeader(string $key): ?string;
 }

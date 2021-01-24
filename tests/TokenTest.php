@@ -67,6 +67,7 @@ class TokenTest extends TestCase
             'aud' => 'PHPUnit',
             'exp' => 1580601600,
             'nbf' => 1577836800,
+            'iat' => 1577836700,
             'jti' => 'sample-id',
             'key1' => 'value1',
             'key2' => 'value2'
@@ -76,5 +77,19 @@ class TokenTest extends TestCase
 
         self::assertEquals($headerData, $token->getHeaders());
         self::assertEquals($payloadData, $token->getPayload());
+
+        self::assertEquals($headerData['typ'], $token->getType());
+        self::assertEquals($headerData['alg'], $token->getCustomHeader('alg'));
+        self::assertEquals($headerData['h-key1'], $token->getCustomHeader('h-key1'));
+        self::assertEquals($headerData['h-key2'], $token->getCustomHeader('h-key2'));
+
+        self::assertEquals($payloadData['iss'], $token->getIssuer());
+        self::assertEquals($payloadData['sub'], $token->getSubject());
+        self::assertEquals($payloadData['aud'], $token->getAudience());
+        self::assertEquals(DateTime::createFromFormat('U', (string)$payloadData['exp']), $token->getExpiration());
+        self::assertEquals(DateTime::createFromFormat('U', (string)$payloadData['nbf']), $token->getNotBefore());
+        self::assertEquals($payloadData['jti'], $token->getID());
+        self::assertEquals($payloadData['key1'], $token->getCustomPayload('key1'));
+        self::assertEquals($payloadData['key2'], $token->getCustomPayload('key2'));
     }
 }

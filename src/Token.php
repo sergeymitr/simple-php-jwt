@@ -32,7 +32,7 @@ class Token implements TokenInterface
         });
 
         if (!empty($payload['iat'])) {
-            $token->setIssuedAt(DateTime::createFromFormat('U', (string)$headers['iat']));
+            $token->setIssuedAt(DateTime::createFromFormat('U', (string)$payload['iat']));
             unset($payload['iat']);
         }
 
@@ -154,5 +154,54 @@ class Token implements TokenInterface
     {
         $this->header[$key] = $value;
         return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return empty($this->header['typ']) ? null : (string)$this->header['typ'];
+    }
+
+    public function getIssuer(): ?string
+    {
+        return empty($this->payload['iss']) ? null : (string)$this->payload['iss'];
+    }
+
+    public function getSubject(): ?string
+    {
+        return empty($this->payload['sub']) ? null : (string)$this->payload['sub'];
+    }
+
+    public function getAudience(): ?string
+    {
+        return empty($this->payload['aud']) ? null : (string)$this->payload['aud'];
+    }
+
+    public function getExpiration(): ?DateTimeInterface
+    {
+        return empty($this->payload['exp'])
+            ? null
+            : DateTime::createFromFormat('U', (string)$this->payload['exp']);
+    }
+
+    public function getNotBefore(): ?DateTimeInterface
+    {
+        return empty($this->payload['nbf'])
+            ? null
+            : DateTime::createFromFormat('U', (string)$this->payload['nbf']);
+    }
+
+    public function getID(): ?string
+    {
+        return empty($this->payload['jti']) ? null : (string)$this->payload['jti'];
+    }
+
+    public function getCustomPayload(string $key): ?string
+    {
+        return empty($this->payload[$key]) ? null : (string)$this->payload[$key];
+    }
+
+    public function getCustomHeader(string $key): ?string
+    {
+        return empty($this->header[$key]) ? null : (string)$this->header[$key];
     }
 }
