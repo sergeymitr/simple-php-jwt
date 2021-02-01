@@ -161,6 +161,13 @@ class Token implements TokenInterface
         return empty($this->header['typ']) ? null : (string)$this->header['typ'];
     }
 
+    public function getIssuedAt(): ?DateTimeInterface
+    {
+        return empty($this->payload['iat'])
+            ? null
+            : DateTime::createFromFormat('U', (string)$this->payload['iat']);
+    }
+
     public function getIssuer(): ?string
     {
         return empty($this->payload['iss']) ? null : (string)$this->payload['iss'];
