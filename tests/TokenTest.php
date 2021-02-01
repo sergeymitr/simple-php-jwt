@@ -83,6 +83,7 @@ class TokenTest extends TestCase
         self::assertEquals($headerData['h-key1'], $token->getCustomHeader('h-key1'));
         self::assertEquals($headerData['h-key2'], $token->getCustomHeader('h-key2'));
 
+        self::assertEquals(DateTime::createFromFormat('U', (string)$payloadData['iat']), $token->getIssuedAt());
         self::assertEquals($payloadData['iss'], $token->getIssuer());
         self::assertEquals($payloadData['sub'], $token->getSubject());
         self::assertEquals($payloadData['aud'], $token->getAudience());

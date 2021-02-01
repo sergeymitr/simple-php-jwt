@@ -66,6 +66,13 @@ interface TokenInterface
     public function setIssuedAt(DateTimeInterface $dateTime): TokenInterface;
 
     /**
+     * Get the "Issued At" claim.
+     *
+     * @return DateTimeInterface|null
+     */
+    public function getIssuedAt(): ?DateTimeInterface;
+
+    /**
      * Set the token issuer (e.g. your website name or URL).
      * Optional.
      *
