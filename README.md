@@ -5,6 +5,12 @@ The library serves a single purpose: making JWT easier to work with.
 ## Requirements
 - PHP 7.4 or higher.
 
+## Installation
+Run this command to install the library via Composer:
+```bash
+composer require sergeymitr/simple-php-jwt
+```
+
 ## Usage
 
 ### Creating and Encoding the Token
