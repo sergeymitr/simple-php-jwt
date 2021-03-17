@@ -3,7 +3,7 @@
     "description": "Simple JWT Authentication using PHP",
     "version": "1.0.0-dev",
     "type": "library",
-    "license": "GNU GPLv3",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Sergey Mitroshin",
