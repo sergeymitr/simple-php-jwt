@@ -23,7 +23,7 @@ class TokenTest extends TestCase
         $token = Token::create();
 
         foreach ($claimsData as $key => $data) {
-            $token->{'set' . strtoupper($key)}($data);
+            $token->{'set' . ucfirst($key)}($data);
         }
 
         $token->setCustomHeader('h-key1', 'h-value1');
