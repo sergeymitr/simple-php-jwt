@@ -1,7 +1,7 @@
 {
     "name": "sergeymitr/simple-php-jwt",
     "description": "Simple JWT Authentication using PHP",
-    "version": "1.0.0-dev",
+    "version": "1.0.0",
     "type": "library",
     "license": "GPL-3.0-or-later",
     "authors": [
