@@ -1,4 +1,4 @@
-# Simple PHP JTW
+# Simple PHP JWT
 
 The library serves a single purpose: making JWT easier to work with.
 
